@@ -2,13 +2,17 @@
 
 A macOS posture-detection app that lives behind your MacBook's notch. Hover the notch for a live camera preview and posture status; after 15 seconds of sustained bad posture, a red light appears beside the notch and stays there until you fix it.
 
+[![Download](https://img.shields.io/github/v/release/legitHacker23/postureProject?label=Download&color=0A84FF&style=for-the-badge&logo=apple)](https://github.com/legitHacker23/postureProject/releases/latest/download/PostureProject.dmg)
+[![Downloads](https://img.shields.io/github/downloads/legitHacker23/postureProject/total?style=for-the-badge&color=34C759)](https://github.com/legitHacker23/postureProject/releases)
+[![macOS](https://img.shields.io/badge/macOS-14%2B-black?style=for-the-badge&logo=apple)](https://www.apple.com/macos/)
+
 ## Installing PostureProject
 
 PostureProject isn't signed with an Apple Developer ID (this is a personal project and I'm not paying the $99/year for signing). macOS will flag it on first launch. It's safe — you can verify the source on GitHub — but you'll need to manually approve it once. Pick whichever method is easier.
 
 ### 1. Download and install
 
-1. Download `PostureProject.dmg`.
+1. [**Download PostureProject.dmg**](https://github.com/legitHacker23/postureProject/releases/latest/download/PostureProject.dmg).
 2. Double-click to open it, then drag **PostureProject** into the **Applications** folder.
 3. Eject the disk image.
 
