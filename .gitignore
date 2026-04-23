@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Xcode user state (machine-specific UI/navigator state)
+xcuserdata/
+*.xcuserstate
+
+# Xcode build outputs / caches
+build/
+DerivedData/
+*.dSYM.zip
+*.ipa
+
+# Distribution artifacts — host DMGs on GitHub Releases, not in the repo
+*.dmg
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# Python (from one-off icon-processing venv)
+__pycache__/
+*.pyc
+.venv/
+venv/
