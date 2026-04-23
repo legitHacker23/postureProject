@@ -13,7 +13,20 @@ import SwiftUI
 class BodyLandmarks: ObservableObject {
     @Published var landmarks: [CGPoint]? = nil
     private let bodyPoseRequest = VNDetectHumanBodyPoseRequest()
-    var postureEval: Double?
+    @Published var postureEval: Double?
+
+    // Tuning knobs for leniency.
+    // `goodScoreThreshold`: the regressor's raw output above which a single
+    // frame is considered good posture. Lower = more forgiving per frame.
+    // `rollingWindowSize`: number of recent frames used for majority vote
+    // (~0.5s at 30fps). Higher = smoother but slower to react.
+    // `goodMajorityFraction`: share of the rolling window that must be good
+    // to surface "good" in the UI. 0.5 = bare majority.
+    private let goodScoreThreshold: Double = 0.5
+    private let rollingWindowSize: Int = 15
+    private let goodMajorityFraction: Double = 0.5
+
+    private var recentFrameIsGood: [Bool] = []
     
     //create a dictionary to grab convert joint locations to compatible CGPoint format
     //to calc necessary values for posture data
@@ -103,16 +116,26 @@ class BodyLandmarks: ObservableObject {
             
             //input posture calculations to the model
             let output = try? postureModel?.prediction(Head_Tilt: headTilt, Head_Lean: headLean, Head_Rotation: headRotation)
-            
-            postureEval = output?.Posture
-            
-            if (postureEval == 1.0) {
-                print("Good")
+
+            // Model output is a continuous leaf-average in [0, 1]. Threshold
+            // below 1.0 so we don't require a "perfectly pure good" leaf.
+            let rawScore = output?.Posture ?? 0.0
+            let frameGood = rawScore >= goodScoreThreshold
+
+            // Rolling-window majority vote: smooths out per-frame noise so a
+            // single misclassification doesn't flip the UI state.
+            recentFrameIsGood.append(frameGood)
+            if recentFrameIsGood.count > rollingWindowSize {
+                recentFrameIsGood.removeFirst()
             }
-            else {
-                print("Bad")
-            }
-            
+            let goodCount = recentFrameIsGood.filter { $0 }.count
+            let goodShare = Double(goodCount) / Double(recentFrameIsGood.count)
+            let smoothedGood = goodShare >= goodMajorityFraction
+
+            postureEval = smoothedGood ? 1.0 : 0.0
+
+            print("raw=\(rawScore) frameGood=\(frameGood) smoothed=\(smoothedGood)")
+
         } else {
             print("Missing landmarks, skipping calculation")
         }
